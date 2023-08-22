@@ -22,6 +22,8 @@ namespace ExcelReader.Services
         Task UploadExcelFile(IFormFile file);
         Task<List<ITRequest>> GetExcelFileData();
         DateTime ConvertToDate(string dateString);
+        Task<List<ITRequestWithFile>> GetITRequestsWithFiles();
+
 
     }
 
@@ -103,36 +105,20 @@ namespace ExcelReader.Services
         {
             return await _dbContext.ITRequests.ToListAsync();
         }
+
+        public async Task<List<ITRequestWithFile>> GetITRequestsWithFiles()
+        {
+            var query = from itRequest in _dbContext.ITRequests
+                        join userFile in _dbContext.UserFiles
+                        on itRequest.SourceFileId equals userFile.FileId
+                        select new ITRequestWithFile
+                        {
+                            ITRequest = itRequest,
+                            UserFile = userFile
+                        };
+
+            return await query.ToListAsync();
+        }
     }
 }
 
-
-
-/*using var memoryStream = new MemoryStream();
-await file.CopyToAsync(memoryStream);
-
-using var package = new ExcelPackage(memoryStream);
-ExcelWorksheet worksheet = package.Workbook.Worksheets[0]; // Assuming the data is in the first worksheet
-
-int rowCount = worksheet.Dimension.Rows;
-
-List<ITRequest> requests = new List<ITRequest>();
-
-for (int row = 2; row <= rowCount; row++) // Start from 2 to skip the header row
-{
-    var request = new ITRequest
-    {
-        Author = worksheet.Cells[row, 1].Value.ToString(),
-        Type = worksheet.Cells[row, 2].Value.ToString(),
-        Subject = worksheet.Cells[row, 3].Value.ToString(),
-        Body = worksheet.Cells[row, 4].Value.ToString(),
-        RequestSubmissionDate = DateTime.Parse(worksheet.Cells[row, 5].Value.ToString()),
-        RequestCompletionDate = DateTime.Parse(worksheet.Cells[row, 6].Value.ToString()),
-        Status = Enum.Parse<ITRequestStatusTypes>(worksheet.Cells[row, 7].Value.ToString())
-    };
-    requests.Add(request);
-}
-
-_dbContext.ITRequests.AddRange(requests);
-await _dbContext.SaveChangesAsync();
-*/

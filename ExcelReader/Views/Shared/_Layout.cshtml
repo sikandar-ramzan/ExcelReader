@@ -29,6 +29,8 @@
             </li>
             <li class="nav-item">
                <a class="nav-link" asp-area="" asp-controller="ViewITRequests" asp-action="Index">View Excel Data</a>
+            </li><li class="nav-item">
+               <a class="nav-link" asp-area="" asp-controller="ITRequestWithFile" asp-action="Index">View IT Request With File</a>
             </li>
             
           </ul>
@@ -57,6 +59,8 @@
 
     <script>
         $('#it-request-table').DataTable();
+    </script><script>
+        $('#it-request-with-file-table').DataTable();
     </script>
    
     @await RenderSectionAsync("Scripts", required: false)

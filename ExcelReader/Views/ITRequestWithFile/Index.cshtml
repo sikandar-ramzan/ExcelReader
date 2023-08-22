@@ -1,0 +1,42 @@
+﻿@model List<ITRequestWithFile>
+
+@if (Model.Count > 0)
+{
+    <h2>The Data in This View is Inner Joined where IT_Request.sourceFileId equals UserFile_FileId</h2>
+    <hr />
+    <table id="it-request-with-file-table" class="table table-striped table-hover table-bordered">
+        <thead>
+            <tr>
+                <th scope="col">Request Id</th>
+                <th scope="col">Request Author</th>
+                <th scope="col">Type</th>
+                <th scope="col">Subject</th>
+                <th scope="col">Body</th>
+                <th scope="col">Request Submission Date</th>
+                <th scope="col">Request Completion Date</th>
+                <th scope="col">Status</th>
+                <th scope="col">Filename</th>
+                <th scope="col">Owner</th>
+                <th scope="col">Upload Date</th>
+            </tr>
+        </thead>
+        <tbody class="table-group-divider">
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.ITRequest.RequestId</td>
+                    <td>@item.ITRequest.Author</td>
+                    <td>@item.ITRequest.Type</td>
+                    <td>@item.ITRequest.Subject</td>
+                    <td>@item.ITRequest.Body</td>
+                    <td>@item.ITRequest.RequestSubmissionDate</td>
+                    <td>@item.ITRequest.RequestCompletionDate</td>
+                    <td>@item.ITRequest.Status</td>
+                    <td>@item.UserFile.Filename</td>
+                    <td>@item.UserFile.Owner</td>
+                    <td>@item.UserFile.UploadDate</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
