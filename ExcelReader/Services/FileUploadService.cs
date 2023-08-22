@@ -37,6 +37,9 @@ namespace ExcelReader.Services
         public async Task UploadExcelFile(IFormFile file)
         {
             var itRequests = new List<ITRequest>();
+
+
+
             var sourceFileId = Guid.NewGuid().ToString();
             string fileName = file.FileName;
 
@@ -63,7 +66,18 @@ namespace ExcelReader.Services
                 }
             }
 
+
+            var userFileData = new UserFile()
+            {
+                FileId = sourceFileId,
+                Filename = fileName,
+                Owner = "Sikandar",
+                UploadDate = DateTime.Now,
+
+            };
+
             _dbContext.ITRequests.AddRange(itRequests);
+            _dbContext.UserFiles.Add(userFileData);
             await _dbContext.SaveChangesAsync();
 
 
