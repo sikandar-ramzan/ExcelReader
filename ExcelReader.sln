@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.3.32901.215
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExcelReader", "ExcelReader\ExcelReader.csproj", "{12C88270-ED38-4EF1-BCB1-CE933FCBA6A7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestRazorApp", "TestRazorApp\TestRazorApp.csproj", "{57B63F60-5386-4FFE-9AFF-0928E6D5F817}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExcelReader", "ExcelReader\ExcelReader.csproj", "{B215DBB5-7301-4EBD-ADA5-B7422BB01D37}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -11,10 +13,14 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{12C88270-ED38-4EF1-BCB1-CE933FCBA6A7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{12C88270-ED38-4EF1-BCB1-CE933FCBA6A7}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{12C88270-ED38-4EF1-BCB1-CE933FCBA6A7}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{12C88270-ED38-4EF1-BCB1-CE933FCBA6A7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{57B63F60-5386-4FFE-9AFF-0928E6D5F817}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{57B63F60-5386-4FFE-9AFF-0928E6D5F817}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{57B63F60-5386-4FFE-9AFF-0928E6D5F817}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{57B63F60-5386-4FFE-9AFF-0928E6D5F817}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B215DBB5-7301-4EBD-ADA5-B7422BB01D37}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B215DBB5-7301-4EBD-ADA5-B7422BB01D37}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B215DBB5-7301-4EBD-ADA5-B7422BB01D37}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B215DBB5-7301-4EBD-ADA5-B7422BB01D37}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
