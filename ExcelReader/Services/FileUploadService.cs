@@ -39,7 +39,7 @@ namespace ExcelReader.Services
                 return false;
             }
 
-            var sourceFileId = Guid.NewGuid().ToString();
+            var sourceFileId = Guid.NewGuid();
 
             using (var stream = file.OpenReadStream())
             {

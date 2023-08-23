@@ -18,7 +18,7 @@ namespace ExcelReader.Migrations
                     Type = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Subject = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Body = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    SourceFileId = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    SourceFileId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     RequestSubmissionDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     RequestCompletionDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Status = table.Column<string>(type: "nvarchar(max)", nullable: false)
@@ -32,7 +32,7 @@ namespace ExcelReader.Migrations
                 name: "UserFiles",
                 columns: table => new
                 {
-                    FileId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    FileId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Filename = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Owner = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     UploadDate = table.Column<DateTime>(type: "datetime2", nullable: false)
@@ -40,23 +40,6 @@ namespace ExcelReader.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_UserFiles", x => x.FileId);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Users",
-                columns: table => new
-                {
-                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    Username = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Password = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Project = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Team = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Designation = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    UploadFileIds = table.Column<string>(type: "nvarchar(max)", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Users", x => x.UserId);
                 });
         }
 
@@ -67,9 +50,6 @@ namespace ExcelReader.Migrations
 
             migrationBuilder.DropTable(
                 name: "UserFiles");
-
-            migrationBuilder.DropTable(
-                name: "Users");
         }
     }
 }
