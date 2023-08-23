@@ -15,8 +15,6 @@ namespace ExcelReader.Controllers
         {
             var itRequestsWithFiles = await _fileUploadService.GetITRequestsWithFiles();
 
-            // You can now use itRequestsWithFiles in your view or further process it as needed.
-
             return View(itRequestsWithFiles);
         }
     }

@@ -11,12 +11,12 @@ namespace ExcelReader.Controllers
     {
 
         private readonly IFileUploadService _fileUploadService;
-        
+
 
         public ITRequestController(IFileUploadService fileUploadService)
         {
             _fileUploadService = fileUploadService;
-           
+
         }
 
 
@@ -27,17 +27,6 @@ namespace ExcelReader.Controllers
         }
 
 
-        /* [HttpPost]
-         public async Task<ActionResult> Index(IFormFile file)
-         {
-             var startUplaod = await _fileUploadService.UploadExcelFile(file);
-
-             *//* var itRrequestFromDb = _fileUploadService.GetExcelFileData();*//*
-
-             return View();
-         }
-         */
-
         [HttpPost]
         public async Task<ActionResult> Index(IFormFile file)
         {
@@ -47,12 +36,12 @@ namespace ExcelReader.Controllers
 
                 if (uploadSuccessful)
                 {
-                   
-                    return View("Success"); 
+
+                    return View("Success");
                 }
             }
 
-            
+
             return View("Failure");
         }
     }

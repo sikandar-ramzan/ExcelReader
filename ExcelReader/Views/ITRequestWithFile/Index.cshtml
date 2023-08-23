@@ -1,5 +1,12 @@
 ﻿@model List<ITRequestWithFile>
 
+
+@if(Model.Count < 1)
+{
+	<div class="container">
+		<h2 class="display-4">No Records Found!</h2>
+	</div>
+}
 @if (Model.Count > 0)
 {
     <h2>The Data in This View is Inner Joined where IT_Request.sourceFileId equals UserFile_FileId</h2>
