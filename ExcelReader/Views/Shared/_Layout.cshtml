@@ -13,7 +13,7 @@
     
 </head>
 <body>
-    <header>
+    <header class="masthead mb-auto">
 
       <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
       <div class="container">
@@ -24,14 +24,13 @@
 
         <div class="collapse navbar-collapse" id="navbarsExample07">
           <ul class="navbar-nav mr-auto">
-            <li class="nav-item active">
-              <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index">Login</a>
-            </li>
             <li class="nav-item">
                <a class="nav-link" asp-area="" asp-controller="ITRequest" asp-action="Index">Upload Excel File</a>
             </li>
             <li class="nav-item">
                <a class="nav-link" asp-area="" asp-controller="ViewITRequests" asp-action="Index">View Excel Data</a>
+            </li><li class="nav-item">
+               <a class="nav-link" asp-area="" asp-controller="ITRequestWithFile" asp-action="Index">View IT Request With File</a>
             </li>
             
           </ul>
@@ -60,6 +59,8 @@
 
     <script>
         $('#it-request-table').DataTable();
+    </script><script>
+        $('#it-request-with-file-table').DataTable();
     </script>
    
     @await RenderSectionAsync("Scripts", required: false)

@@ -20,8 +20,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Views\Login\" />
-    <Folder Include="Views\Signup\" />
     <Folder Include="wwwroot\files\" />
   </ItemGroup>
 
