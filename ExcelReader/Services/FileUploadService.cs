@@ -39,7 +39,7 @@ namespace ExcelReader.Services
                 return false;
             }
 
-            var sourceFileId = Guid.NewGuid().ToString();
+            var sourceFileId = Guid.NewGuid();
 
             using (var stream = file.OpenReadStream())
             {
@@ -72,8 +72,9 @@ namespace ExcelReader.Services
                 UploadDate = DateTime.Now,
             };
 
-            _dbContext.ITRequests.AddRange(itRequests);
             _dbContext.UserFiles.Add(userFileData);
+            await _dbContext.SaveChangesAsync();
+            _dbContext.ITRequests.AddRange(itRequests);
 
             try
             {
