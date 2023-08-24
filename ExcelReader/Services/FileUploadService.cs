@@ -72,8 +72,9 @@ namespace ExcelReader.Services
                 UploadDate = DateTime.Now,
             };
 
-            _dbContext.ITRequests.AddRange(itRequests);
             _dbContext.UserFiles.Add(userFileData);
+            await _dbContext.SaveChangesAsync();
+            _dbContext.ITRequests.AddRange(itRequests);
 
             try
             {
