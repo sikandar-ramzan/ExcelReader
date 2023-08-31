@@ -10,24 +10,24 @@ namespace ExcelReader.Controllers
     public class ITRequestController : Controller
     {
 
-        private readonly IFileUploadService _fileUploadService;
+        /* private readonly IFileUploadService _fileUploadService;*/
 
 
-        public ITRequestController(IFileUploadService fileUploadService)
-        {
-            _fileUploadService = fileUploadService;
+        /* public ITRequestController(IFileUploadService fileUploadService)
+         {
+             _fileUploadService = fileUploadService;
 
-        }
+         }*/
 
 
-        [HttpGet]
+        /*  [HttpGet]*/
         public IActionResult Index()
         {
             return View();
         }
 
 
-        [HttpPost]
+        /*[HttpPost]
         public async Task<ActionResult> Index(IFormFile file)
         {
             if (file != null && file.Length > 0)
@@ -43,7 +43,7 @@ namespace ExcelReader.Controllers
 
 
             return View("Failure");
-        }
+        }*/
     }
 
 

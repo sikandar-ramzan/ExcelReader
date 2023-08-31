@@ -29,8 +29,12 @@
             </li>
             <li class="nav-item">
                <a class="nav-link" asp-area="" asp-controller="ViewITRequests" asp-action="Index">View Excel Data</a>
-            </li><li class="nav-item">
+            </li>
+            <li class="nav-item">
                <a class="nav-link" asp-area="" asp-controller="ITRequestWithFile" asp-action="Index">View IT Request With File</a>
+            </li>
+           <li class="nav-item">
+                <a class="nav-link" asp-area="" asp-controller="WeatherForecast" >Weather Forecast</a>
             </li>
             
           </ul>
@@ -51,11 +55,12 @@
         </div>
     </footer>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
    
     <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script src="~/js/weatherData.js"></script>
 
     <script>
         $('#it-request-table').DataTable();
