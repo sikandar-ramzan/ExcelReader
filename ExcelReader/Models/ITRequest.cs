@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ExcelReader.Models
 {
-    public class ITRequest
+    public class ItRequest
     {
         [Key]
         public Guid RequestId { get; set; }

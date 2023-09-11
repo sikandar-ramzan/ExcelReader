@@ -10,7 +10,7 @@ namespace ExcelReader.Services
     public interface IFileUploadService
     {
         Task<bool> UploadExcelFile(IFormFile file);
-        Task<List<ITRequest>> GetExcelFileData();
+        Task<List<ItRequest>> GetExcelFileData();
         DateTime ConvertToDate(string dateString);
         Task<List<ITRequestWithFile>> GetITRequestsWithFiles();
 
@@ -29,7 +29,7 @@ namespace ExcelReader.Services
 
         public async Task<bool> UploadExcelFile(IFormFile file)
         {
-            var itRequests = new List<ITRequest>();
+            var itRequests = new List<ItRequest>();
 
             string fileName = file.FileName;
 
@@ -48,7 +48,7 @@ namespace ExcelReader.Services
                 {
                     while (reader.Read())
                     {
-                        itRequests.Add(new ITRequest
+                        itRequests.Add(new ItRequest
                         {
                             RequestId = Guid.NewGuid(),
                             Author = reader.GetValue(1).ToString(),
@@ -74,7 +74,7 @@ namespace ExcelReader.Services
 
             _dbContext.UserFiles.Add(userFileData);
             await _dbContext.SaveChangesAsync();
-            _dbContext.ITRequests.AddRange(itRequests);
+            _dbContext.ItRequests.AddRange(itRequests);
 
             try
             {
@@ -102,14 +102,14 @@ namespace ExcelReader.Services
             }
         }
 
-        public async Task<List<ITRequest>> GetExcelFileData()
+        public async Task<List<ItRequest>> GetExcelFileData()
         {
-            return await _dbContext.ITRequests.ToListAsync();
+            return await _dbContext.ItRequests.ToListAsync();
         }
 
         public async Task<List<ITRequestWithFile>> GetITRequestsWithFiles()
         {
-            var query = from itRequest in _dbContext.ITRequests
+            var query = from itRequest in _dbContext.ItRequests
                         join userFile in _dbContext.UserFiles
                         on itRequest.SourceFileId equals userFile.FileId
                         select new ITRequestWithFile

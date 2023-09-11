@@ -27,25 +27,9 @@ namespace ExcelReaderAPI.Controllers
             _configuration = configuration;
         }
 
-        private string GetUserIdFromClaims()
-        {
-            var identity = HttpContext.User.Identity as ClaimsIdentity;
-            var userId = identity?.FindFirst("UserId");
-
-            return userId?.Value;
-        }
-
-        private string GetUserRoleFromClaims()
-        {
-            var identity = HttpContext.User.Identity as ClaimsIdentity;
-            var roleClaim = identity?.FindFirst(ClaimTypes.Role);
-
-            return roleClaim?.Value;
-        }
-
         [Authorize(Roles = "Admin, User")]
         [HttpGet]
-        public async Task<ActionResult<List<ITRequestWithFile>>> GetAllITRequests()
+        public ActionResult<List<ITRequestWithFile>> GetAllITRequests()
         {
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.ASCII.GetBytes(_configuration.GetSection("AuthSecret:Token").Value);
@@ -77,14 +61,15 @@ namespace ExcelReaderAPI.Controllers
             }
             catch (Exception ex)
             {
-                return Unauthorized("Invalid token.");
+                return Unauthorized($"Invalid token. Error: {ex}");
+
             }
             return _fileUploadService.GetAllItRequests();
         }
 
         [HttpPost]
         [Authorize(Roles = "Admin, User")]
-        public async Task<IActionResult> UploadExcelFile(IFormFile file)
+        public IActionResult UploadExcelFile(IFormFile file)
         {
             if (file != null && file.Length > 0)
             {

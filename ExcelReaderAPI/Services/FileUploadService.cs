@@ -7,20 +7,10 @@ using ExcelReaderAPI.Models;
 namespace ExcelReaderAPI.Services
 {
 
-    /*public interface IFileUploadService
-    {
-        Task<bool> UploadExcelFile(IFormFile file);
-        Task<List<ITRequest>> GetExcelFileData();
-        DateTime ConvertToDate(string dateString);
-        Task<List<ITRequestWithFile>> GetITRequestsWithFiles();
-
-
-    }*/
 
     public class FileUploadService
     {
 
-        /*private readonly string _dbConnString;*/
         private readonly DatabaseHelper _databaseHelper;
 
 
@@ -34,15 +24,11 @@ namespace ExcelReaderAPI.Services
             var reqAuthor = "Sikandar R";
             var uploadDate = DateTime.Now;
 
-            string output;
-
             string userInsertionQuery =
                 "insert into ExcelReaderDb2.dbo.UserFiles values" +
                 "(@fileId, @fileName, @author, @uploadDate)";
 
-            /* using (SqlConnection conn = new SqlConnection(_databaseHelper.GetDBConnString()))
-             {*/
-            SqlCommand cmd = new SqlCommand(userInsertionQuery, connection);
+            var cmd = new SqlCommand(userInsertionQuery, connection);
             cmd.Parameters.AddWithValue("@fileId", fileId);
             cmd.Parameters.AddWithValue("@fileName", filename);
             cmd.Parameters.AddWithValue("@author", reqAuthor);
@@ -50,23 +36,17 @@ namespace ExcelReaderAPI.Services
 
             try
             {
-                /*conn.Open();*/
 
-                // Execute the SQL command
-                output = $"{cmd.ExecuteNonQuery()} rows added!";
 
-                // The record has been inserted successfully
+                cmd.ExecuteNonQuery();
+
             }
             catch (Exception ex)
             {
-                // Handle any exceptions that may occur during the execution
-                output = ex.Message;
+
                 Console.WriteLine("Error: " + ex.Message);
             }
 
-            /*}*/
-
-            /* return output;*/
         }
 
         public string UploadExcelFile(IFormFile file)
@@ -97,11 +77,11 @@ namespace ExcelReaderAPI.Services
 
                 ITRequestsFromFile = ExtractDataFromExcelFile(file, sourceFileId);
 
-                // Create a SqlCommand for the stored procedure
-                var cmd = new SqlCommand("Upload_IT_Request", conn);
-                cmd.CommandType = CommandType.StoredProcedure;
+                var cmd = new SqlCommand("Upload_IT_Request", conn)
+                {
+                    CommandType = CommandType.StoredProcedure
+                };
 
-                // Add parameters for the stored procedure
                 cmd.Parameters.Add(new SqlParameter("@RequestId", SqlDbType.UniqueIdentifier));
                 cmd.Parameters.Add(new SqlParameter("@Author", SqlDbType.NVarChar, -1));
                 cmd.Parameters.Add(new SqlParameter("@Type", SqlDbType.NVarChar, -1));
@@ -116,7 +96,6 @@ namespace ExcelReaderAPI.Services
                 {
                     foreach (var itRequest in ITRequestsFromFile)
                     {
-                        // Set parameter values for each ITRequest object
                         cmd.Parameters["@RequestId"].Value = itRequest.RequestId;
                         cmd.Parameters["@Author"].Value = itRequest.Author;
                         cmd.Parameters["@Type"].Value = itRequest.Type;
@@ -135,7 +114,6 @@ namespace ExcelReaderAPI.Services
                 }
                 catch (Exception ex)
                 {
-                    // Handle any exceptions that may occur during execution
                     Console.WriteLine("Error: " + ex.Message);
                 }
 
@@ -144,17 +122,12 @@ namespace ExcelReaderAPI.Services
 
             }
 
-
             return $"{rowsEffectCount} rows added";
-
-
-
-
 
         }
 
 
-        public DateTime ConvertToDate(string dateString)
+        public DateTime ConvertToDate(string? dateString)
         {
             string[] dateFormats = { "yyyy-MM-dd", "MM/dd/yyyy", "dd/MM/yyyy" };
 
@@ -183,14 +156,14 @@ namespace ExcelReaderAPI.Services
                         itRequests.Add(new ITRequest
                         {
                             RequestId = Guid.NewGuid(),
-                            Author = reader.GetValue(1).ToString(),
-                            Type = reader.GetValue(2).ToString(),
-                            Subject = reader.GetValue(3).ToString(),
-                            Body = reader.GetValue(4).ToString(),
+                            Author = reader.GetValue(1).ToString() ?? "",
+                            Type = reader.GetValue(2).ToString() ?? "",
+                            Subject = reader.GetValue(3).ToString() ?? "",
+                            Body = reader.GetValue(4).ToString() ?? "",
                             SourceFileId = fileId,
                             RequestSubmissionDate = ConvertToDate(reader.GetValue(5).ToString()),
                             RequestCompletionDate = ConvertToDate(reader.GetValue(6).ToString()),
-                            Status = reader.GetValue(7).ToString(),
+                            Status = reader.GetValue(7).ToString() ?? "",
                         });
                     }
                 }
@@ -204,9 +177,8 @@ namespace ExcelReaderAPI.Services
         {
             var itRequests = new List<ITRequestWithFile>();
 
-            using (SqlConnection connection = new SqlConnection(_databaseHelper.GetDBConnString()))
+            using (var connection = new SqlConnection(_databaseHelper.GetDBConnString()))
             {
-                /*using (var command = new SqlCommand("GET_IT_REQUESTS", connection))*/
                 using (var command = new SqlCommand("IT_REQUESTS_WITH_FILE", connection))
                 {
                     command.CommandType = CommandType.StoredProcedure;
@@ -220,21 +192,21 @@ namespace ExcelReaderAPI.Services
                             var itRequest = new ITRequest
                             {
                                 RequestId = (Guid)reader["RequestId"],
-                                Author = reader["Author"].ToString(),
-                                Type = reader["Type"].ToString(),
-                                Subject = reader["Subject"].ToString(),
-                                Body = reader["Body"].ToString(),
+                                Author = reader["Author"].ToString() ?? "",
+                                Type = reader["Type"].ToString() ?? "",
+                                Subject = reader["Subject"].ToString() ?? "",
+                                Body = reader["Body"].ToString() ?? "",
                                 SourceFileId = (Guid)reader["SourceFileId"],
                                 RequestSubmissionDate = (DateTime)reader["Request_Date"],
                                 RequestCompletionDate = (DateTime)reader["Completion_Date"],
-                                Status = reader["Status"].ToString()
+                                Status = reader["Status"].ToString() ?? ""
                             };
 
                             var userFile = new UserFile
                             {
                                 FileId = (Guid)reader["File_Id"],
-                                Filename = reader["Filename"].ToString(),
-                                Owner = reader["Owner"].ToString(),
+                                Filename = reader["Filename"].ToString() ?? "",
+                                Owner = reader["Owner"].ToString() ?? "",
                                 UploadDate = (DateTime)reader["UploadDate"]
                             };
 
@@ -244,11 +216,6 @@ namespace ExcelReaderAPI.Services
                                 UserFile = userFile
                             };
 
-
-                            /*var itRequestWithFile = new ITRequestWithFile
-                            {
-
-                            }*/
                             itRequests.Add(itRequestWithFile);
                         }
                     }
@@ -258,19 +225,6 @@ namespace ExcelReaderAPI.Services
             return itRequests;
         }
 
-        /* public async Task<List<ITRequestWithFile>> GetITRequestsWithFiles()
-         {
-             *//*var query = from itRequest in _dbContext.ITRequests
-                         join userFile in _dbContext.UserFiles
-                         on itRequest.SourceFileId equals userFile.FileId
-                         select new ITRequestWithFile
-                         {
-                             ITRequest = itRequest,
-                             UserFile = userFile
-                         };*//*
-
-             return await { }*//*query.ToListAsync();*//*
-         }*/
     }
 }
 

@@ -5,16 +5,11 @@ namespace ExcelReader.Controllers
 {
     public class ITRequestWithFileController : Controller
     {
-        private readonly IFileUploadService _fileUploadService;
 
-        public ITRequestWithFileController(IFileUploadService fileUploadService)
+        public ITRequestWithFileController()
+        { }
+        public IActionResult Index()
         {
-            _fileUploadService = fileUploadService;
-        }
-        public async Task<IActionResult> Index()
-        {
-            var itRequestsWithFiles = await _fileUploadService.GetITRequestsWithFiles();
-
             return View();
         }
     }

@@ -10,7 +10,7 @@ namespace ExcelReader.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "ITRequests",
+                name: "ItRequests",
                 columns: table => new
                 {
                     RequestId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
@@ -46,7 +46,7 @@ namespace ExcelReader.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "ITRequests");
+                name: "ItRequests");
 
             migrationBuilder.DropTable(
                 name: "UserFiles");

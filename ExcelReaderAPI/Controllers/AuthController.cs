@@ -27,7 +27,7 @@ namespace ExcelReaderAPI.Controllers
 
 
         [HttpPost("register-user")]
-        public async Task<IActionResult> RegisterUser(UserDto request)
+        public IActionResult RegisterUser(UserDto request)
         {
 
 
@@ -46,7 +46,7 @@ namespace ExcelReaderAPI.Controllers
         }
 
         [HttpPost("register-admin")]
-        public async Task<ActionResult> RegisterAdminUser(UserDto request)
+        public ActionResult RegisterAdminUser(UserDto request)
         {
 
             var userCreationResponse = _authServices.CreateUser(request.Username, request.Password, true);
@@ -67,7 +67,7 @@ namespace ExcelReaderAPI.Controllers
         }
 
         [HttpPost("login")]
-        public async Task<ActionResult<object>> Login(UserDto request)
+        public ActionResult<object> Login(UserDto request)
         {
 
             var userLoginResponse = _authServices.LoginUser(request.Username, request.Password);
