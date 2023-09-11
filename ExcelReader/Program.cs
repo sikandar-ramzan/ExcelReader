@@ -28,7 +28,7 @@ namespace ExcelReader
                 app.UseHsts();
             }
 
-           
+
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
@@ -38,7 +38,7 @@ namespace ExcelReader
             app.UseAuthorization();
 
             app.UseCors(options => options
-               .WithOrigins("https://yourwebappdomain.com") // Specify the allowed origin(s)
+               .AllowAnyOrigin()
                .AllowAnyMethod()
                .AllowAnyHeader()
  );

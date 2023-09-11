@@ -13,8 +13,6 @@ namespace ExcelReader.Services
         Task<List<ItRequest>> GetExcelFileData();
         DateTime ConvertToDate(string dateString);
         Task<List<ITRequestWithFile>> GetITRequestsWithFiles();
-
-
     }
 
     public class FileUploadService : IFileUploadService
@@ -25,7 +23,6 @@ namespace ExcelReader.Services
         {
             _dbContext = dbContext;
         }
-
 
         public async Task<bool> UploadExcelFile(IFormFile file)
         {
