@@ -51,14 +51,14 @@ namespace ExcelReader.Services
                         itRequests.Add(new ItRequest
                         {
                             RequestId = Guid.NewGuid(),
-                            Author = reader.GetValue(1).ToString(),
-                            Type = reader.GetValue(2).ToString(),
-                            Subject = reader.GetValue(3).ToString(),
-                            Body = reader.GetValue(4).ToString(),
+                            Author = reader.GetValue(1).ToString() ?? "",
+                            Type = reader.GetValue(2).ToString() ?? "",
+                            Subject = reader.GetValue(3).ToString() ?? "",
+                            Body = reader.GetValue(4).ToString() ?? "",
                             SourceFileId = sourceFileId,
                             RequestSubmissionDate = ConvertToDate(reader.GetValue(5).ToString()),
                             RequestCompletionDate = ConvertToDate(reader.GetValue(6).ToString()),
-                            Status = reader.GetValue(7).ToString(),
+                            Status = reader.GetValue(7).ToString() ?? "",
                         });
                     }
                 }
@@ -88,7 +88,7 @@ namespace ExcelReader.Services
             }
         }
 
-        public DateTime ConvertToDate(string dateString)
+        public DateTime ConvertToDate(string? dateString)
         {
             string[] dateFormats = { "yyyy-MM-dd", "MM/dd/yyyy", "dd/MM/yyyy" };
 
