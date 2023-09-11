@@ -3,74 +3,100 @@ using System.Data.SqlClient;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Data;
+using ExcelReaderAPI.Models;
+using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
+using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
+using Microsoft.AspNetCore.DataProtection.KeyManagement;
+using Microsoft.Extensions.Configuration;
+using System.Text;
 
 namespace ExcelReaderAPI.Controllers
 {
-    [Route("upload-it-request")]
+    [Route("it-request")]
     [ApiController]
     public class ITRequestUpload : ControllerBase
     {
-        private readonly DatabaseHelper _databaseHelper;
         private readonly FileUploadService _fileUploadService;
+        private readonly IConfiguration _configuration;
 
-        public ITRequestUpload(DatabaseHelper databaseHelper, FileUploadService fileUploadService)
+        public ITRequestUpload(FileUploadService fileUploadService, IConfiguration configuration)
         {
-            _databaseHelper = databaseHelper;
             _fileUploadService = fileUploadService;
+            _configuration = configuration;
         }
 
-        public SqlDbType ParamValue { get; private set; }
-
-        /* [HttpPost]*/
-        /* public async Task<IActionResult> UploadExcelFile(IFormFile file)
-         {
-             // Define the name and parameters for your stored procedure
-             string storedProcedureName = "Upload_IT_Request";
-             var parameters = new[]
-             {
-             new SqlParameter("@ParamName", ParamValue)
-             // Add parameters as needed
-             };
-
-             // Execute the stored procedure
-             var result = _databaseHelper.ExecuteStoredProcedure(storedProcedureName, parameters);
-
-             // You can return the result as JSON or in any format you prefer
-             *//*            return Ok(result);
-             *//*
-             if (file != null && file.Length > 0)
-             {
-                 bool uploadSuccessful = await _fileUploadService.UploadExcelFile(file);
-
-                 if (uploadSuccessful)
-                 {
-
-                     return Ok("success");
-                 }
-             }
-
-
-             return BadRequest("failure");
-         }*/
-        /*[HttpPost]
-        public async Task<IActionResult> UploadITRequest(IFormFile file)
+        private string GetUserIdFromClaims()
         {
+            var identity = HttpContext.User.Identity as ClaimsIdentity;
+            var userId = identity?.FindFirst("UserId");
 
-            return Ok();
-        }*/
-        /* private readonly IFileUploadService _fileUploadService;*/
+            return userId?.Value;
+        }
 
-        /* public ITRequestWithFileController(IFileUploadService fileUploadService)
-         {
-             _fileUploadService = fileUploadService;
-         }*/
-        /*  public async Task<IActionResult> Index()
-          {
-              var itRequestsWithFiles = await _fileUploadService.GetITRequestsWithFiles();
+        private string GetUserRoleFromClaims()
+        {
+            var identity = HttpContext.User.Identity as ClaimsIdentity;
+            var roleClaim = identity?.FindFirst(ClaimTypes.Role);
 
-              return View(itRequestsWithFiles);
-          }*/
+            return roleClaim?.Value;
+        }
+
+        [Authorize(Roles = "Admin, User")]
+        [HttpGet]
+        public async Task<ActionResult<List<ITRequestWithFile>>> GetAllITRequests()
+        {
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var key = Encoding.ASCII.GetBytes(_configuration.GetSection("AuthSecret:Token").Value);
+            var tokenValidationParameters = new TokenValidationParameters
+            {
+                ValidateIssuerSigningKey = true,
+                IssuerSigningKey = new SymmetricSecurityKey(key),
+                ValidateIssuer = false,
+                ValidateAudience = false
+            };
+            var token = HttpContext.Request.Headers["Authorization"].FirstOrDefault()?.Split(" ").Last();
+
+
+            try
+            {
+                // Validate and parse the token
+                var claimsPrincipal = tokenHandler.ValidateToken(token, tokenValidationParameters, out SecurityToken validatedToken);
+
+                // Check if the token has expired
+                var expiration = claimsPrincipal.Claims.FirstOrDefault(c => c.Type == JwtRegisteredClaimNames.Exp)?.Value;
+                if (!string.IsNullOrEmpty(expiration) && long.TryParse(expiration, out long expirationUnixTimestamp))
+                {
+                    var expirationDateTime = DateTimeOffset.FromUnixTimeSeconds(expirationUnixTimestamp).UtcDateTime;
+                    if (expirationDateTime <= DateTime.UtcNow)
+                    {
+                        return Unauthorized("Token has expired.");
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                return Unauthorized("Invalid token.");
+            }
+            return _fileUploadService.GetAllItRequests();
+        }
+
+        [HttpPost]
+        [Authorize(Roles = "Admin, User")]
+        public async Task<IActionResult> UploadExcelFile(IFormFile file)
+        {
+            if (file != null && file.Length > 0)
+            {
+                var uploadSuccessful = _fileUploadService.UploadExcelFile(file);
+
+                if (uploadSuccessful != null)
+                {
+                    return Ok(uploadSuccessful);
+                }
+            }
+
+            return BadRequest("failure");
+        }
     }
 }
-
-

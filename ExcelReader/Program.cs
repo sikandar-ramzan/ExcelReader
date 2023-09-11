@@ -28,11 +28,7 @@ namespace ExcelReader
                 app.UseHsts();
             }
 
-            app.UseCors(options => options
-                .WithOrigins("https://yourwebappdomain.com") // Specify the allowed origin(s)
-                .AllowAnyMethod()
-                .AllowAnyHeader()
-  );
+           
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
@@ -40,6 +36,12 @@ namespace ExcelReader
             app.UseRouting();
 
             app.UseAuthorization();
+
+            app.UseCors(options => options
+               .WithOrigins("https://yourwebappdomain.com") // Specify the allowed origin(s)
+               .AllowAnyMethod()
+               .AllowAnyHeader()
+ );
 
             app.MapControllerRoute(
                 name: "default",

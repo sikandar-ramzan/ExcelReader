@@ -15,7 +15,7 @@ namespace ExcelReader.Controllers
         {
             var itRequestsWithFiles = await _fileUploadService.GetITRequestsWithFiles();
 
-            return View(itRequestsWithFiles);
+            return View();
         }
     }
 }

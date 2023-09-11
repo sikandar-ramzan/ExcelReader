@@ -18,31 +18,20 @@ namespace ExcelReaderAPI.Services
             return dbConnString;
         }
 
-        /* public DataTable ExecuteStoredProcedure(string storedProcedureName, SqlParameter[] parameters = null)
-         {
-             using (var connection = new SqlConnection(_connectionString))
-             {
-                 using (var command = new SqlCommand(storedProcedureName, connection))
-                 {
-                     command.CommandType = CommandType.StoredProcedure;
+        public SqlConnection CreateDbConnection()
+        {
+            var connection = new SqlConnection(_connectionString);
 
-                     if (parameters != null)
-                     {
-                         command.Parameters.AddRange(parameters);
-                     }
+            return connection;
+        }
 
-                     connection.Open();
+        public SqlCommand CreateSqlCommand(string query, SqlConnection connection)
+        {
+            var command = new SqlCommand(query, connection);
 
-                     var dataTable = new DataTable();
-                     using (var reader = command.ExecuteReader())
-                     {
-                         dataTable.Load(reader);
-                     }
+            return command;
+        }
 
-                     return dataTable;
-                 }
-             }
-         }*/
 
     }
 }
