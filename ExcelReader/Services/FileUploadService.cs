@@ -1,6 +1,4 @@
-﻿using System.Globalization;
-using ExcelDataReader;
-using ExcelReader.Data;
+﻿using ExcelReader.Data;
 using ExcelReader.Models;
 using Microsoft.EntityFrameworkCore;
 
