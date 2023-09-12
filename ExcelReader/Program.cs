@@ -16,7 +16,7 @@ namespace ExcelReader
             {
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
             });
-            builder.Services.AddScoped<IFileUploadService, FileUploadService>();
+            builder.Services.AddScoped<FileUploadService>();
 
             var app = builder.Build();
 
