@@ -2,7 +2,7 @@
 {
     public class ITRequestWithFile
     {
-        public ItRequest ITRequest { get; set; }
+        public ItRequest ItRequest { get; set; }
         public UserFile UserFile { get; set; }
 
     }

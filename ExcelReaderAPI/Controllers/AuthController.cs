@@ -1,11 +1,6 @@
-﻿
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Security.Cryptography;
-using ExcelReaderAPI.Models;
+﻿using ExcelReaderAPI.Models;
 using ExcelReaderAPI.Services;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.IdentityModel.Tokens;
 
 namespace ExcelReaderAPI.Controllers
 {
@@ -13,26 +8,17 @@ namespace ExcelReaderAPI.Controllers
     [ApiController]
     public class AuthController : ControllerBase
     {
-
         private readonly UserAuthService _authServices;
-        private readonly IConfiguration _configuration;
 
-        public AuthController(UserAuthService authServices, IConfiguration configuration)
+        public AuthController(UserAuthService authServices)
         {
             _authServices = authServices;
-            _configuration = configuration;
-
         }
-
-
 
         [HttpPost("register-user")]
         public IActionResult RegisterUser(UserDto request)
         {
-
-
             var userCreationResponse = _authServices.CreateUser(request.Username, request.Password, false);
-
 
             if (userCreationResponse.Success)
             {
@@ -48,9 +34,7 @@ namespace ExcelReaderAPI.Controllers
         [HttpPost("register-admin")]
         public ActionResult RegisterAdminUser(UserDto request)
         {
-
             var userCreationResponse = _authServices.CreateUser(request.Username, request.Password, true);
-
 
             if (userCreationResponse.Success)
             {
@@ -61,19 +45,12 @@ namespace ExcelReaderAPI.Controllers
             {
                 return BadRequest(userCreationResponse.Message);
             }
-
-
-
         }
 
         [HttpPost("login")]
         public ActionResult<object> Login(UserDto request)
         {
-
             var userLoginResponse = _authServices.LoginUser(request.Username, request.Password);
-
-
-
 
             if (!userLoginResponse.Success || userLoginResponse.UserFromDb == null)
             {
@@ -83,11 +60,8 @@ namespace ExcelReaderAPI.Controllers
             var token = _authServices.CreateToken(userFromDb, userFromDb.IsAdminUser);
 
             return Ok(new { Token = token, UserId = userLoginResponse.UserFromDb.UserId, Username = userLoginResponse.UserFromDb.Username, IsAdminUser = userLoginResponse.UserFromDb.IsAdminUser });
-
-
         }
 
     }
-
 
 }

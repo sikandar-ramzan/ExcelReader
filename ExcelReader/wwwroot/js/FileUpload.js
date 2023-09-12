@@ -26,8 +26,13 @@
                 window.alert(data);
             },
             error: (err) => {
-                window.alert(err.responseText);
-                console.log("error: ", err);
+                if (!err.responseText && !jwtToken) {
+                    // Unauthorized status code (401) detected
+                    window.alert("Unauthorized - User not signed in");
+                } else {
+                    window.alert(err.responseText);
+                }
+                console.log("error: ",  err);
             }
         });
     });

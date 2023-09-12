@@ -1,7 +1,7 @@
-﻿using ExcelDataReader;
+﻿using System.Globalization;
+using ExcelDataReader;
 using ExcelReader.Data;
 using ExcelReader.Models;
-using System.Globalization;
 using Microsoft.EntityFrameworkCore;
 
 
@@ -111,7 +111,7 @@ namespace ExcelReader.Services
                         on itRequest.SourceFileId equals userFile.FileId
                         select new ITRequestWithFile
                         {
-                            ITRequest = itRequest,
+                            ItRequest = itRequest,
                             UserFile = userFile
                         };
 

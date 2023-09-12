@@ -43,7 +43,6 @@ namespace ExcelReaderAPI
                 options.OperationFilter<SecurityRequirementsOperationFilter>();
             });
 
-            /*builder.Configuration.AddJsonFile("appsettings.json");*/
             builder.Services.AddSingleton(provider => new DatabaseHelper(builder.Configuration.GetConnectionString("DefaultConnection")));
             builder.Services.AddScoped<FileUploadService>();
             builder.Services.AddScoped<UserAuthService>();
@@ -66,8 +65,7 @@ namespace ExcelReaderAPI
                 .AllowAnyOrigin()
                 .AllowAnyMethod()
                 .AllowAnyHeader()
-  );
-
+                );
 
             app.MapControllers();
 

@@ -1,4 +1,5 @@
 ﻿using System.Data;
+using System.Data.Common;
 using System.Data.SqlClient;
 using System.Globalization;
 using ExcelDataReader;
@@ -10,9 +11,7 @@ namespace ExcelReaderAPI.Services
 
     public class FileUploadService
     {
-
         private readonly DatabaseHelper _databaseHelper;
-
 
         public FileUploadService(DatabaseHelper databaseHelper)
         {
@@ -21,8 +20,8 @@ namespace ExcelReaderAPI.Services
 
         public void AddUserFiles(Guid fileId, string filename, SqlConnection connection)
         {
-            var reqAuthor = "Sikandar R";
-            var uploadDate = DateTime.Now;
+            const string reqAuthor = "Sikandar R";
+            DateTime uploadDate = DateTime.Now;
 
             string userInsertionQuery =
                 "insert into ExcelReaderDb2.dbo.UserFiles values" +
@@ -33,47 +32,46 @@ namespace ExcelReaderAPI.Services
             cmd.Parameters.AddWithValue("@fileName", filename);
             cmd.Parameters.AddWithValue("@author", reqAuthor);
             cmd.Parameters.AddWithValue("@uploadDate", uploadDate);
-
             try
             {
-
-
                 cmd.ExecuteNonQuery();
-
             }
-            catch (Exception ex)
+            catch
             {
-
-                Console.WriteLine("Error: " + ex.Message);
+                throw;
             }
 
         }
 
         public string UploadExcelFile(IFormFile file)
         {
-
-
+            string uploadFileResponse;
             string fileName = file.FileName;
             List<ITRequest> ITRequestsFromFile;
             var sourceFileId = Guid.NewGuid();
 
-            bool fileAreadyInDB;
             int rowsEffectCount = 0;
 
             using (var conn = new SqlConnection(_databaseHelper.GetDBConnString()))
             {
                 conn.Open();
-                var checkFileExistQuery = "select COUNT('FILE_ID') from dbo.UserFiles where filename = @filename";
+                string checkFileExistQuery = "select COUNT('FILE_ID') from dbo.UserFiles where filename = @filename";
 
                 var checkFileExistCmd = new SqlCommand(checkFileExistQuery, conn);
 
                 checkFileExistCmd.Parameters.AddWithValue("@filename", fileName);
-                var filesInDb = (Int32)checkFileExistCmd.ExecuteScalar();
-                fileAreadyInDB = filesInDb > 0;
+                int filesInDb = (Int32)checkFileExistCmd.ExecuteScalar();
+                var fileAreadyInDB = filesInDb > 0;
 
                 if (fileAreadyInDB) return "File Already Present in DB";
-
-                AddUserFiles(sourceFileId, fileName, conn);
+                try
+                {
+                    AddUserFiles(sourceFileId, fileName, conn);
+                }
+                catch
+                {
+                    uploadFileResponse = "Error while adding user to database";
+                }
 
                 ITRequestsFromFile = ExtractDataFromExcelFile(file, sourceFileId);
 
@@ -106,15 +104,17 @@ namespace ExcelReaderAPI.Services
                         cmd.Parameters["@Completion_Date"].Value = itRequest.RequestCompletionDate;
                         cmd.Parameters["@Status"].Value = itRequest.Status;
 
-
                         var response = cmd.ExecuteNonQuery();
                         rowsEffectCount += response;
 
                     }
+
+                    uploadFileResponse = $"{rowsEffectCount} rows added";
                 }
-                catch (Exception ex)
+                catch
                 {
-                    Console.WriteLine("Error: " + ex.Message);
+
+                    uploadFileResponse = "error while uploading it-request data to database";
                 }
 
 
@@ -122,7 +122,7 @@ namespace ExcelReaderAPI.Services
 
             }
 
-            return $"{rowsEffectCount} rows added";
+            return uploadFileResponse;
 
         }
 

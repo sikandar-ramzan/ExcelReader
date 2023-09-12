@@ -1,10 +1,9 @@
-﻿using System.Data.Common;
-using System.Data.SqlClient;
+﻿using System.Data.SqlClient;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
+using System.Text;
 using ExcelReaderAPI.Models;
-using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 
 namespace ExcelReaderAPI.Services
@@ -42,15 +41,51 @@ namespace ExcelReaderAPI.Services
             }
         }
 
+        public object ValidateToken(string token)
+        {
+            /*var TokenValidity = new Object();*/
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var key = Encoding.ASCII.GetBytes(_configuration.GetSection("AuthSecret:Token").Value);
+            var tokenValidationParameters = new TokenValidationParameters
+            {
+                ValidateIssuerSigningKey = true,
+                IssuerSigningKey = new SymmetricSecurityKey(key),
+                ValidateIssuer = false,
+                ValidateAudience = false
+            };
+
+            try
+            {
+                // Validate and parse the token
+                var claimsPrincipal = tokenHandler.ValidateToken(token, tokenValidationParameters, out SecurityToken validatedToken);
+
+                // Check if the token has expired
+                var expiration = claimsPrincipal.Claims.FirstOrDefault(c => c.Type == JwtRegisteredClaimNames.Exp)?.Value;
+                if (!string.IsNullOrEmpty(expiration) && long.TryParse(expiration, out long expirationUnixTimestamp))
+                {
+                    var expirationDateTime = DateTimeOffset.FromUnixTimeSeconds(expirationUnixTimestamp).UtcDateTime;
+                    if (expirationDateTime <= DateTime.UtcNow)
+                    {
+                        return new { Success = false, Message = "Token has expired." };
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                return new { Success = false, Message = "Invalid Token" };
+            }
+
+        }
+
         public string CreateToken(User user, bool isAdmin)
         {
             string userRole = isAdmin ? "Admin" : "User";
             List<Claim> claims = new List<Claim>
-    {
-        new Claim(ClaimTypes.Name, user.Username),
-        new Claim(ClaimTypes.Role, userRole),
-        new Claim("UserId", user.UserId.ToString())
-    };
+             {
+                new Claim(ClaimTypes.Name, user.Username),
+                new Claim(ClaimTypes.Role, userRole),
+                new Claim("UserId", user.UserId.ToString())
+             };
 
             var authSecretToken = _configuration.GetSection("AuthSecret:Token").Value;
             int tokenExpirationInMinutes = _configuration.GetValue<int>("TokenExpirationTimeout:Minutes");
@@ -59,12 +94,8 @@ namespace ExcelReaderAPI.Services
                 throw new Exception("AuthSecret:Token configuration value is missing.");
             }
             var key = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(authSecretToken));
-
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
-
-
             var tokenExpiration = DateTime.Now.AddMinutes(tokenExpirationInMinutes);
-
             var token = new JwtSecurityToken(
                 claims: claims,
                 expires: tokenExpiration,
@@ -107,15 +138,12 @@ namespace ExcelReaderAPI.Services
             return null;
         }
 
-
         public UserAuthResponse CreateUser(string username, string password, bool isAdmin)
         {
             var dbConnection = _databaseHelper.CreateDbConnection();
             dbConnection.Open();
 
             User? userFromDb = GetUserFromDb(username, dbConnection);
-
-
 
             if (userFromDb != null)
             {
@@ -157,14 +185,12 @@ namespace ExcelReaderAPI.Services
             }
         }
 
-
         public UserAuthResponse LoginUser(string username, string password)
         {
             var dbConnection = _databaseHelper.CreateDbConnection();
             dbConnection.Open();
 
             User? userFromDb = GetUserFromDb(username, dbConnection);
-
 
             if (userFromDb == null)
             {
@@ -181,9 +207,5 @@ namespace ExcelReaderAPI.Services
             dbConnection.Dispose();
             return new UserAuthResponse { Success = false, Message = "Invalid password" };
         }
-
-
-
-
     }
 }

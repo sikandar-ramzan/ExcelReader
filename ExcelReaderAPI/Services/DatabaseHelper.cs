@@ -1,6 +1,4 @@
-﻿using System;
-using System.Data;
-using System.Data.SqlClient;
+﻿using System.Data.SqlClient;
 namespace ExcelReaderAPI.Services
 {
     public class DatabaseHelper
@@ -21,17 +19,13 @@ namespace ExcelReaderAPI.Services
         public SqlConnection CreateDbConnection()
         {
             var connection = new SqlConnection(_connectionString);
-
             return connection;
         }
 
         public SqlCommand CreateSqlCommand(string query, SqlConnection connection)
         {
             var command = new SqlCommand(query, connection);
-
             return command;
         }
-
-
     }
 }
