@@ -25,35 +25,30 @@ namespace ExcelReaderAPI.Controllers
                 return Ok($"User: {request.Username} created successfully!");
             }
 
-
             return BadRequest(userCreationResponse.Message);
-
         }
 
         [HttpPost("register-admin")]
         public ActionResult RegisterAdminUser(UserDto request)
         {
             var userCreationResponse = _authServices.CreateUser(request.Username, request.Password, true);
-
             if (userCreationResponse.Success)
             {
                 return Ok(userCreationResponse.Message);
             }
 
-
             return BadRequest(userCreationResponse.Message);
-
         }
 
         [HttpPost("login")]
         public ActionResult<object> Login(UserDto request)
         {
             var userLoginResponse = _authServices.LoginUser(request.Username, request.Password);
-
             if (!userLoginResponse.Success || userLoginResponse.UserFromDb == null)
             {
                 return BadRequest(userLoginResponse.Message);
             }
+
             var userFromDb = userLoginResponse.UserFromDb;
             var token = _authServices.CreateToken(userFromDb, userFromDb.IsAdminUser);
 

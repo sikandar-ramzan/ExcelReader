@@ -2,7 +2,7 @@
 
 namespace ExcelReaderAPI.Utilities
 {
-    public class Utilities
+    public class Helpers
     {
         public void CreatePasswordHash(string password, out byte[] passwordHash, out byte[] passwordSalt)
         {
