@@ -3,13 +3,12 @@
 namespace ExcelReader.Controllers
 {
     [Route("/it-request")]
-    public class ITRequestController : Controller
+    public class ItRequestController : Controller
     {
         public IActionResult Index()
         {
             return View();
         }
-
     }
 
 

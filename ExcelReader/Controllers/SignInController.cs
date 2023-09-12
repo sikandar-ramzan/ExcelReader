@@ -10,6 +10,5 @@ namespace ExcelReader.Controllers
         {
             return View();
         }
-
     }
 }

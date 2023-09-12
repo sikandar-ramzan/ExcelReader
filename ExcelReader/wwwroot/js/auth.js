@@ -1,4 +1,5 @@
-﻿$(document).ready(() => {
+﻿import { AUTH_LOGIN_URL, AUTH_REGISTER_ADMIN_URL, AUTH_REGISTER_USER_URL } from "./Config";
+$(document).ready(() => {
     $("#sign-in-form").submit((e) => {
         e.preventDefault();
 
@@ -14,7 +15,7 @@
 
 
         $.ajax({
-            url: "http://localhost:6769/api/auth/login",
+            url: AUTH_LOGIN_URL,
             method: "POST",
             contentType: "application/json",
             data: JSON.stringify(userData),
@@ -49,9 +50,7 @@
             IsAdmin: isAdmin
         };
 
-        let url = isAdmin
-            ? "http://localhost:6769/api/auth/register-admin"
-            : "http://localhost:6769/api/auth/register-user";
+        let url = isAdmin ? AUTH_REGISTER_ADMIN_URL : AUTH_REGISTER_USER_URL;
 
         $.ajax({
             url: url,

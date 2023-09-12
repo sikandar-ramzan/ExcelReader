@@ -1,4 +1,6 @@
-﻿$(document).ready(() => {
+﻿import { UPLOAD_IT_REQUEST_URL } from "./Config";
+
+$(document).ready(() => {
     $("#uploadExcelFile").submit((e) => {
         e.preventDefault();
         let form_data = new FormData($("#uploadExcelFile")[0]);
@@ -13,7 +15,7 @@
         }
 
         $.ajax({
-            url: "http://localhost:6769/it-request",
+            url: UPLOAD_IT_REQUEST_URL,
             method: "POST",
             cache: false,
             dataType: 'json',
@@ -27,15 +29,12 @@
             },
             error: (err) => {
                 console.log("err", err)
-                if (!jwtToken || err.status == 401)
-                {
+                if (!jwtToken || err.status == 401) {
                     window.alert(err.responseText);
                 }
-                else if (jwtToken && err.status == 401)
-                {
+                else if (jwtToken && err.status == 401) {
                     window.alert("Token Expired! Sign In Again");
-                } else if (err.responseText)
-                {
+                } else if (err.responseText) {
                     window.alert(err.responseText);
                 }
                 else {

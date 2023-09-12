@@ -10,10 +10,10 @@ namespace ExcelReaderAPI.Services
             _connectionString = connectionString;
         }
 
-        public string GetDBConnString()
+        public string GetDbConnString()
         {
-            var dbConnString = _connectionString;
-            return dbConnString;
+
+            return _connectionString;
         }
 
         public SqlConnection CreateDbConnection()

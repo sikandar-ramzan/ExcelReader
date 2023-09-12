@@ -25,10 +25,9 @@ namespace ExcelReaderAPI.Controllers
                 return Ok($"User: {request.Username} created successfully!");
             }
 
-            else
-            {
-                return BadRequest(userCreationResponse.Message);
-            }
+
+            return BadRequest(userCreationResponse.Message);
+
         }
 
         [HttpPost("register-admin")]
@@ -41,10 +40,9 @@ namespace ExcelReaderAPI.Controllers
                 return Ok(userCreationResponse.Message);
             }
 
-            else
-            {
-                return BadRequest(userCreationResponse.Message);
-            }
+
+            return BadRequest(userCreationResponse.Message);
+
         }
 
         [HttpPost("login")]

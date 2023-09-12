@@ -1,10 +1,10 @@
 ﻿using System.Data.SqlClient;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using System.Security.Cryptography;
 using System.Text;
 using ExcelReaderAPI.Models;
 using Microsoft.IdentityModel.Tokens;
+using ExcelReaderAPI.Utilities;
 
 namespace ExcelReaderAPI.Services
 {
@@ -13,37 +13,18 @@ namespace ExcelReaderAPI.Services
 
         private readonly DatabaseHelper _databaseHelper;
         private readonly IConfiguration _configuration;
+        private readonly Helpers _helpers;
 
 
         public UserAuthService(IConfiguration configuration, DatabaseHelper databaseHelper)
         {
             _databaseHelper = databaseHelper;
             _configuration = configuration;
-
-        }
-
-        private void CreatePasswordHash(string password, out byte[] passwordHash, out byte[] passwordSalt)
-        {
-            using (var hmac = new HMACSHA512())
-            {
-                passwordSalt = hmac.Key;
-                passwordHash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password));
-            }
-        }
-
-        private bool VerifyPasswordHash(string password, byte[] passwordHash, byte[] passwordSalt)
-        {
-            using (var hmac = new HMACSHA512(passwordSalt))
-            {
-                var computedHash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password));
-                return computedHash.SequenceEqual(passwordHash);
-
-            }
+            _helpers = new Helpers();
         }
 
         public ObjectResponse ValidateToken(string? token)
         {
-            /*var TokenValidity = new Object();*/
 
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.ASCII.GetBytes(_configuration.GetSection("AuthSecret:Token").Value);
@@ -146,7 +127,8 @@ namespace ExcelReaderAPI.Services
                 return new ObjectResponse { Success = false, Message = $"User with username: {username} already exist!" };
             }
 
-            CreatePasswordHash(password, out byte[] passwordHash, out byte[] passwordSalt);
+
+            _helpers.CreatePasswordHash(password, out byte[] passwordHash, out byte[] passwordSalt);
             var user = new User
             {
                 UserId = Guid.NewGuid(),
@@ -156,7 +138,7 @@ namespace ExcelReaderAPI.Services
                 IsAdminUser = isAdmin
             };
 
-            var createUserQuery = "insert into Users values (@userId, @username, @pswrdHash, @pswrdSalt, @isAdmin)";
+            const string createUserQuery = "insert into Users values (@userId, @username, @pswrdHash, @pswrdSalt, @isAdmin)";
 
             var createUserCmd = _databaseHelper.CreateSqlCommand(createUserQuery, dbConnection);
             createUserCmd.Parameters.AddWithValue("@userId", user.UserId);
@@ -194,7 +176,7 @@ namespace ExcelReaderAPI.Services
             }
 
             // Verify the entered password against the stored hash and salt
-            if (VerifyPasswordHash(password, userFromDb.PasswordHash, userFromDb.PasswordSalt))
+            if (_helpers.VerifyPasswordHash(password, userFromDb.PasswordHash, userFromDb.PasswordSalt))
             {
                 return new UserAuthResponse { Success = true, Message = $"Login successful for user: {username}", UserFromDb = userFromDb };
             }

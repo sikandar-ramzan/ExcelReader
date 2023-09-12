@@ -21,9 +21,9 @@ namespace ExcelReaderAPI.Services
         public void AddUserFiles(Guid fileId, string filename, SqlConnection connection)
         {
             const string reqAuthor = "Sikandar R";
-            DateTime uploadDate = DateTime.Now;
+            var uploadDate = DateTime.Now;
 
-            string userInsertionQuery =
+            const string userInsertionQuery =
                 "insert into ExcelReaderDb2.dbo.UserFiles values" +
                 "(@fileId, @fileName, @author, @uploadDate)";
 
@@ -45,35 +45,32 @@ namespace ExcelReaderAPI.Services
 
         public ObjectResponse UploadExcelFile(IFormFile file)
         {
-            string fileName = file.FileName;
-            List<ITRequest> ITRequestsFromFile;
             var sourceFileId = Guid.NewGuid();
-
             int rowsEffectCount = 0;
 
-            using (var conn = new SqlConnection(_databaseHelper.GetDBConnString()))
+            using (var conn = new SqlConnection(_databaseHelper.GetDbConnString()))
             {
                 conn.Open();
-                string checkFileExistQuery = "select COUNT('FILE_ID') from dbo.UserFiles where filename = @filename";
+                const string checkFileExistQuery = "select COUNT('FILE_ID') from dbo.UserFiles where filename = @filename";
 
                 var checkFileExistCmd = new SqlCommand(checkFileExistQuery, conn);
 
-                checkFileExistCmd.Parameters.AddWithValue("@filename", fileName);
-                int filesInDb = (Int32)checkFileExistCmd.ExecuteScalar();
-                var fileAreadyInDB = filesInDb > 0;
+                checkFileExistCmd.Parameters.AddWithValue("@filename", file.FileName);
+                var filesInDb = (Int32)checkFileExistCmd.ExecuteScalar();
+                var fileAreadyInDb = filesInDb > 0;
 
-                if (fileAreadyInDB) return new ObjectResponse { Success = false, Message = "File Already Present in DB" };
+                if (fileAreadyInDb) return new ObjectResponse { Success = false, Message = "File Already Present in DB" };
 
                 try
                 {
-                    AddUserFiles(sourceFileId, fileName, conn);
+                    AddUserFiles(sourceFileId, file.FileName, conn);
                 }
                 catch
                 {
                     return new ObjectResponse { Success = false, Message = "Error while adding user to database" };
                 }
 
-                ITRequestsFromFile = ExtractDataFromExcelFile(file, sourceFileId);
+                var ITRequestsFromFile = ExtractDataFromExcelFile(file, sourceFileId);
 
                 var cmd = new SqlCommand("Upload_IT_Request", conn)
                 {
@@ -111,17 +108,10 @@ namespace ExcelReaderAPI.Services
                 }
                 catch
                 {
-
                     return new ObjectResponse { Success = false, Message = "error while uploading it-request data to database" };
                 }
-
-
-
-
             }
-
             return new ObjectResponse { Success = true, Message = $"{rowsEffectCount} rows added" };
-
         }
 
         public DateTime ConvertToDate(string? dateString)
@@ -174,7 +164,7 @@ namespace ExcelReaderAPI.Services
         {
             var itRequests = new List<ITRequestWithFile>();
 
-            using (var connection = new SqlConnection(_databaseHelper.GetDBConnString()))
+            using (var connection = new SqlConnection(_databaseHelper.GetDbConnString()))
             {
                 using (var command = new SqlCommand("IT_REQUESTS_WITH_FILE", connection))
                 {

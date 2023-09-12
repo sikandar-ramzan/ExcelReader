@@ -1,4 +1,5 @@
-﻿
+﻿import { UPLOAD_IT_REQUEST_URL } from "./Config";
+
 $(document).ready(() => {
     console.log("document is ready")
     var loadDataBttn = $("#loadTableData");
@@ -13,7 +14,7 @@ $(document).ready(() => {
     }
     loadDataBttn.click(() => {
         $.ajax({
-            url: "http://localhost:6769/it-request",
+            url: UPLOAD_IT_REQUEST_URL,
             method: "GET",
             cache: false,
             async: true,
@@ -51,17 +52,3 @@ $(document).ready(() => {
 
 
 })
-
-
-/*$('#it-request-with-file-table').DataTable();
-$('#example').DataTable({
-    columns: [
-        { title: 'Name' },
-        { title: 'Position' },
-        { title: 'Office' },
-        { title: 'Extn.' },
-        { title: 'Start date' },
-        { title: 'Salary' }
-    ],
-    data: dataSet
-});*/
