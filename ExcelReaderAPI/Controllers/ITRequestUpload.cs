@@ -1,10 +1,7 @@
-﻿using System.IdentityModel.Tokens.Jwt;
-using System.Text;
-using ExcelReaderAPI.Models;
+﻿using ExcelReaderAPI.Models;
 using ExcelReaderAPI.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.IdentityModel.Tokens;
 
 namespace ExcelReaderAPI.Controllers
 {
@@ -13,12 +10,12 @@ namespace ExcelReaderAPI.Controllers
     public class ITRequestUpload : ControllerBase
     {
         private readonly FileUploadService _fileUploadService;
-        private readonly IConfiguration _configuration;
+        private readonly UserAuthService _authService;
 
-        public ITRequestUpload(FileUploadService fileUploadService, IConfiguration configuration)
+        public ITRequestUpload(FileUploadService fileUploadService, UserAuthService authServices)
         {
             _fileUploadService = fileUploadService;
-            _configuration = configuration;
+            _authService = authServices;
         }
 
         [Authorize(Roles = "Admin, User")]
@@ -27,7 +24,12 @@ namespace ExcelReaderAPI.Controllers
         {
 
             var token = HttpContext.Request.Headers["Authorization"].FirstOrDefault()?.Split(" ").Last();
+            var isTokenVaild = _authService.ValidateToken(token);
 
+            if (!isTokenVaild.Success)
+            {
+                return Unauthorized(isTokenVaild.Message);
+            }
 
             return _fileUploadService.GetAllItRequests();
         }
@@ -36,17 +38,32 @@ namespace ExcelReaderAPI.Controllers
         [Authorize(Roles = "Admin, User")]
         public IActionResult UploadExcelFile(IFormFile file)
         {
+            var token = HttpContext.Request.Headers["Authorization"].FirstOrDefault()?.Split(" ").Last();
+            var isTokenVaild = _authService.ValidateToken(token);
+
+            if (!isTokenVaild.Success)
+            {
+                return Unauthorized("User Unauthorized");
+            }
+
+
+
             if (file != null && file.Length > 0)
             {
-                var uploadSuccessful = _fileUploadService.UploadExcelFile(file);
+                var uploadResponse = _fileUploadService.UploadExcelFile(file);
 
-                if (uploadSuccessful != null)
+                if (uploadResponse.Success)
                 {
-                    return Ok(uploadSuccessful);
+                    return Ok(uploadResponse.Message);
+                }
+
+                else
+                {
+                    return BadRequest(uploadResponse.Message);
                 }
             }
 
-            return BadRequest("failure");
+            return BadRequest("file not valid");
         }
     }
 }

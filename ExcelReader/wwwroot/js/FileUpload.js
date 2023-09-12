@@ -3,10 +3,10 @@
         e.preventDefault();
         let form_data = new FormData($("#uploadExcelFile")[0]);
         let headers;
-        // Assuming you have a JWT token stored in a variable called 'jwtToken'
+
         let jwtToken = localStorage.getItem('jwtToken');
         if (jwtToken) {
-            // Include the token in the request headers
+
             headers = {
                 'Authorization': 'Bearer ' + jwtToken
             };
@@ -20,19 +20,28 @@
             data: form_data,
             contentType: false,
             processData: false,
-            headers: headers, // Include the JWT token in the request headers
+            headers: headers,
 
             success: (data) => {
                 window.alert(data);
             },
             error: (err) => {
-                if (!err.responseText && !jwtToken) {
-                    // Unauthorized status code (401) detected
-                    window.alert("Unauthorized - User not signed in");
-                } else {
+                console.log("err", err)
+                if (!jwtToken || err.status == 401)
+                {
                     window.alert(err.responseText);
                 }
-                console.log("error: ",  err);
+                else if (jwtToken && err.status == 401)
+                {
+                    window.alert("Token Expired! Sign In Again");
+                } else if (err.responseText)
+                {
+                    window.alert(err.responseText);
+                }
+                else {
+                    window.alert("UnExpected Error Occured")
+
+                }
             }
         });
     });

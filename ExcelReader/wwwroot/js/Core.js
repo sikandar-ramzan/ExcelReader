@@ -3,10 +3,10 @@ $(document).ready(() => {
     console.log("document is ready")
     var loadDataBttn = $("#loadTableData");
     let headers;
-    // Assuming you have a JWT token stored in a variable called 'jwtToken'
+
     let jwtToken = localStorage.getItem('jwtToken');
     if (jwtToken) {
-        // Include the token in the request headers
+
         headers = {
             'Authorization': 'Bearer ' + jwtToken
         };
@@ -37,7 +37,7 @@ $(document).ready(() => {
                 loadDataBttn.prop('disabled', true)
 
 
-              
+
             },
             error: (err) => {
                 console.log(err)

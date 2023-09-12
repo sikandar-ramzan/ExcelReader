@@ -41,9 +41,10 @@ namespace ExcelReaderAPI.Services
             }
         }
 
-        public object ValidateToken(string token)
+        public ObjectResponse ValidateToken(string? token)
         {
             /*var TokenValidity = new Object();*/
+
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.ASCII.GetBytes(_configuration.GetSection("AuthSecret:Token").Value);
             var tokenValidationParameters = new TokenValidationParameters
@@ -66,15 +67,16 @@ namespace ExcelReaderAPI.Services
                     var expirationDateTime = DateTimeOffset.FromUnixTimeSeconds(expirationUnixTimestamp).UtcDateTime;
                     if (expirationDateTime <= DateTime.UtcNow)
                     {
-                        return new { Success = false, Message = "Token has expired." };
+                        return new ObjectResponse { Success = false, Message = "Token has expired." };
                     }
                 }
             }
-            catch (Exception ex)
+            catch
             {
-                return new { Success = false, Message = "Invalid Token" };
+                return new ObjectResponse { Success = false, Message = "Invalid Token" };
             }
 
+            return new ObjectResponse { Success = true, Message = "Token is Valid" };
         }
 
         public string CreateToken(User user, bool isAdmin)
@@ -106,13 +108,6 @@ namespace ExcelReaderAPI.Services
             return jwt;
         }
 
-        public class UserAuthResponse
-        {
-            public bool Success { get; set; }
-            public string Message { get; set; } = String.Empty;
-            public User? UserFromDb { get; set; }
-        }
-
         private User? GetUserFromDb(string username, SqlConnection connection)
         {
             string getUserQuery = "select * from Users where Username = @userName";
@@ -138,7 +133,7 @@ namespace ExcelReaderAPI.Services
             return null;
         }
 
-        public UserAuthResponse CreateUser(string username, string password, bool isAdmin)
+        public ObjectResponse CreateUser(string username, string password, bool isAdmin)
         {
             var dbConnection = _databaseHelper.CreateDbConnection();
             dbConnection.Open();
@@ -148,11 +143,11 @@ namespace ExcelReaderAPI.Services
             if (userFromDb != null)
             {
                 dbConnection.Dispose();
-                return new UserAuthResponse { Success = false, Message = $"User with username: {username} already exist!" };
+                return new ObjectResponse { Success = false, Message = $"User with username: {username} already exist!" };
             }
 
             CreatePasswordHash(password, out byte[] passwordHash, out byte[] passwordSalt);
-            User user = new User
+            var user = new User
             {
                 UserId = Guid.NewGuid(),
                 Username = username,
@@ -176,12 +171,12 @@ namespace ExcelReaderAPI.Services
 
             if (userCreationResponse > 0)
             {
-                return new UserAuthResponse { Success = true, Message = $"User: {username} created successfully!" };
+                return new ObjectResponse { Success = true, Message = $"User: {username} created successfully!" };
             }
 
             else
             {
-                return new UserAuthResponse { Success = false, Message = "Internal Server Error" };
+                return new ObjectResponse { Success = false, Message = "Internal Server Error" };
             }
         }
 

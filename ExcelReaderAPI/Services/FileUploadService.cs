@@ -43,9 +43,8 @@ namespace ExcelReaderAPI.Services
 
         }
 
-        public string UploadExcelFile(IFormFile file)
+        public ObjectResponse UploadExcelFile(IFormFile file)
         {
-            string uploadFileResponse;
             string fileName = file.FileName;
             List<ITRequest> ITRequestsFromFile;
             var sourceFileId = Guid.NewGuid();
@@ -63,14 +62,15 @@ namespace ExcelReaderAPI.Services
                 int filesInDb = (Int32)checkFileExistCmd.ExecuteScalar();
                 var fileAreadyInDB = filesInDb > 0;
 
-                if (fileAreadyInDB) return "File Already Present in DB";
+                if (fileAreadyInDB) return new ObjectResponse { Success = false, Message = "File Already Present in DB" };
+
                 try
                 {
                     AddUserFiles(sourceFileId, fileName, conn);
                 }
                 catch
                 {
-                    uploadFileResponse = "Error while adding user to database";
+                    return new ObjectResponse { Success = false, Message = "Error while adding user to database" };
                 }
 
                 ITRequestsFromFile = ExtractDataFromExcelFile(file, sourceFileId);
@@ -108,13 +108,11 @@ namespace ExcelReaderAPI.Services
                         rowsEffectCount += response;
 
                     }
-
-                    uploadFileResponse = $"{rowsEffectCount} rows added";
                 }
                 catch
                 {
 
-                    uploadFileResponse = "error while uploading it-request data to database";
+                    return new ObjectResponse { Success = false, Message = "error while uploading it-request data to database" };
                 }
 
 
@@ -122,10 +120,9 @@ namespace ExcelReaderAPI.Services
 
             }
 
-            return uploadFileResponse;
+            return new ObjectResponse { Success = true, Message = $"{rowsEffectCount} rows added" };
 
         }
-
 
         public DateTime ConvertToDate(string? dateString)
         {
