@@ -7,7 +7,7 @@ namespace ExcelReader.Data
     {
         public DataContext(DbContextOptions<DataContext> options) : base(options) { }
 
-        public DbSet<ITRequest> ITRequests { get; set; }
+        public DbSet<ItRequest> ItRequests { get; set; }
         public DbSet<UserFile> UserFiles { get; set; }
     }
 }

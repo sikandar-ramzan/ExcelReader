@@ -2,7 +2,9 @@
 
 namespace ExcelReader.Controllers
 {
-    public class ITRequestWithFileController : Controller
+    [Route("api/signin")]
+    [ApiController]
+    public class SignInController : Controller
     {
         public IActionResult Index()
         {

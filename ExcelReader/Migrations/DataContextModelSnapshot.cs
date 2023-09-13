@@ -22,7 +22,7 @@ namespace ExcelReader.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
 
-            modelBuilder.Entity("ExcelReader.Models.ITRequest", b =>
+            modelBuilder.Entity("ExcelReader.Models.ItRequest", b =>
                 {
                     b.Property<Guid>("RequestId")
                         .ValueGeneratedOnAdd()
@@ -59,7 +59,7 @@ namespace ExcelReader.Migrations
 
                     b.HasKey("RequestId");
 
-                    b.ToTable("ITRequests");
+                    b.ToTable("ItRequests");
                 });
 
             modelBuilder.Entity("ExcelReader.Models.UserFile", b =>

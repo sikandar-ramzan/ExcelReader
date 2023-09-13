@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace ExcelReader.Models
+namespace ExcelReaderAPI.Models
 {
     public class UserFile
     {

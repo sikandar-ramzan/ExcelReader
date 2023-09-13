@@ -16,7 +16,7 @@ namespace ExcelReader
             {
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
             });
-            builder.Services.AddScoped<IFileUploadService, FileUploadService>();
+            builder.Services.AddScoped<FileUploadService>();
 
             var app = builder.Build();
 
@@ -28,12 +28,20 @@ namespace ExcelReader
                 app.UseHsts();
             }
 
+
+
             app.UseHttpsRedirection();
             app.UseStaticFiles();
 
             app.UseRouting();
 
             app.UseAuthorization();
+
+            app.UseCors(options => options
+               .AllowAnyOrigin()
+               .AllowAnyMethod()
+               .AllowAnyHeader()
+ );
 
             app.MapControllerRoute(
                 name: "default",

@@ -2,7 +2,7 @@
 
 namespace ExcelReader.Controllers
 {
-    public class ITRequestWithFileController : Controller
+    public class WeatherForecastController : Controller
     {
         public IActionResult Index()
         {

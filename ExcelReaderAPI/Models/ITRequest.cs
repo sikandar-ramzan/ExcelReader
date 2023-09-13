@@ -1,9 +1,9 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace ExcelReader.Models
+namespace ExcelReaderAPI.Models
 {
-    public class ItRequest
+    public class ITRequest
     {
         [Key]
         public Guid RequestId { get; set; }

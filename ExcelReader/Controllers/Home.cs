@@ -6,13 +6,6 @@ namespace ExcelReader.Controllers
 {
     public class Home : Controller
     {
-        private readonly ILogger<Home> _logger;
-
-        public Home(ILogger<Home> logger)
-        {
-            _logger = logger;
-        }
-
         public IActionResult Index()
         {
             return View();

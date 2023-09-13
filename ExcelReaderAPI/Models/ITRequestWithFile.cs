@@ -1,8 +1,8 @@
-﻿namespace ExcelReader.Models
+﻿namespace ExcelReaderAPI.Models
 {
     public class ITRequestWithFile
     {
-        public ItRequest ItRequest { get; set; }
+        public ITRequest ITRequest { get; set; }
         public UserFile UserFile { get; set; }
     }
 }
